@@ -1,0 +1,197 @@
+2025-10-23 14:15:56.838 IST [95959] LOG:  starting PostgreSQL 14.19 (Homebrew) on aarch64-apple-darwin24.4.0, compiled by Apple clang version 17.0.0 (clang-1700.0.13.3), 64-bit
+2025-10-23 14:15:56.839 IST [95959] LOG:  listening on IPv6 address "::1", port 5432
+2025-10-23 14:15:56.839 IST [95959] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-10-23 14:15:56.839 IST [95959] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2025-10-23 14:15:56.841 IST [95960] LOG:  database system was shut down at 2025-10-23 14:13:41 IST
+2025-10-23 14:15:56.843 IST [95959] LOG:  database system is ready to accept connections
+2025-10-23 14:29:41.106 IST [95975] ERROR:  syntax error at or near "p" at character 1
+2025-10-23 14:29:41.106 IST [95975] STATEMENT:  p.product_id,
+	    p.product_name,
+	    u.full_name AS seller_name,
+	    SUM(oi.quantity) AS total_sold,
+	    SUM(oi.quantity * oi.selling_price) AS total_revenue
+	FROM order_items oi
+	JOIN products p ON oi.product_id = p.product_id
+	JOIN users u ON p.seller_id = u.user_id
+	GROUP BY p.product_id, p.product_name, u.full_name
+	ORDER BY total_sold DESC
+	LIMIT 10;
+2025-10-23 14:31:49.101 IST [95975] ERROR:  column oi.selling_price does not exist at character 137
+2025-10-23 14:31:49.101 IST [95975] HINT:  Perhaps you meant to reference the column "p.selling_price".
+2025-10-23 14:31:49.101 IST [95975] STATEMENT:  SELECT 
+	    p.product_id,
+	    p.product_name,
+	    u.full_name AS seller_name,
+	    SUM(oi.quantity) AS total_sold,
+	    SUM(oi.quantity * oi.selling_price) AS total_revenue
+	FROM order_items oi
+	JOIN products p ON oi.product_id = p.product_id
+	JOIN users u ON p.seller_id = u.user_id
+	GROUP BY p.product_id, p.product_name, u.full_name
+	ORDER BY total_sold DESC
+	LIMIT 10;
+2025-10-23 14:34:20.922 IST [95975] ERROR:  column "payment_status" of relation "orders" does not exist at character 48
+2025-10-23 14:34:20.922 IST [95975] STATEMENT:  INSERT INTO orders (customer_id, total_amount, payment_status, delivery_status)
+	VALUES
+	(1, 180.00, 'Paid', 'Delivered'),
+	(2, 260.00, 'Paid', 'Shipped'),
+	(3, 90.00, 'Pending', 'Pending'),
+	(1, 150.00, 'Paid', 'Delivered');
+2025-10-23 14:39:16.586 IST [95975] ERROR:  insert or update on table "orders" violates foreign key constraint "orders_customer_id_fkey"
+2025-10-23 14:39:16.586 IST [95975] DETAIL:  Key (customer_id)=(1) is not present in table "users".
+2025-10-23 14:39:16.586 IST [95975] STATEMENT:  INSERT INTO orders (customer_id, total_amount, payment_method, status, delivery_address)
+	VALUES
+	(1, 180.00, 'Online Payment', 'Delivered', 'Green Valley Apartments, Mumbai'),
+	(2, 260.00, 'UPI', 'Shipped', 'Sunshine Residency, Delhi'),
+	(3, 90.00, 'Cash on Delivery', 'Pending', 'Bandra West, Mumbai'),
+	(1, 150.00, 'UPI', 'Delivered', 'Green Valley Apartments, Mumbai');
+2025-10-23 14:42:49.438 IST [95975] ERROR:  column "selling_price" of relation "order_items" does not exist at character 58
+2025-10-23 14:42:49.438 IST [95975] STATEMENT:  INSERT INTO order_items (order_id, product_id, quantity, selling_price)
+	VALUES
+	(5, 1, 2, 30.00),
+	(5, 2, 1, 40.00),
+	(6, 3, 3, 85.00),
+	(7, 1, 1, 30.00),
+	(8, 2, 2, 40.00);
+2025-10-23 14:43:59.770 IST [95975] ERROR:  insert or update on table "order_items" violates foreign key constraint "order_items_product_id_fkey"
+2025-10-23 14:43:59.770 IST [95975] DETAIL:  Key (product_id)=(1) is not present in table "products".
+2025-10-23 14:43:59.770 IST [95975] STATEMENT:  INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase)
+	VALUES
+	(5, 1, 2, 30.00),
+	(5, 2, 1, 40.00),
+	(6, 3, 3, 85.00),
+	(7, 1, 1, 30.00),
+	(8, 2, 2, 40.00);
+2025-10-23 14:44:48.437 IST [95975] ERROR:  insert or update on table "products" violates foreign key constraint "products_category_id_fkey"
+2025-10-23 14:44:48.437 IST [95975] DETAIL:  Key (category_id)=(1) is not present in table "categories".
+2025-10-23 14:44:48.437 IST [95975] STATEMENT:  INSERT INTO products 
+	(seller_id, category_id, product_name, description, unit, quantity_label, stock_quantity, low_stock_alert, mrp, selling_price, product_image_url)
+	VALUES
+	(4, 1, 'Amul Milk', 'Fresh Amul Cow Milk', 'ml', '500ml', 50, 5, 35.00, 30.00, 'images/amul_milk.jpg'),
+	(4, 2, 'Brown Bread', 'Whole wheat brown bread', 'g', '400g', 30, 5, 45.00, 40.00, 'images/brown_bread.jpg'),
+	(4, 3, 'Butter', 'Amul Butter 100g', 'g', '100g', 25, 5, 55.00, 50.00, 'images/amul_butter.jpg');
+2025-10-23 14:48:33.857 IST [95975] ERROR:  relation "reviews" already exists
+2025-10-23 14:48:33.857 IST [95975] STATEMENT:  CREATE TABLE reviews (
+	    review_id SERIAL PRIMARY KEY,
+	    product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
+	    customer_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+	    rating INT CHECK (rating BETWEEN 1 AND 5) NOT NULL,
+	    review_text TEXT,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-10-23 14:52:35.261 IST [95975] ERROR:  relation "cart" already exists
+2025-10-23 14:52:35.261 IST [95975] STATEMENT:  CREATE TABLE cart (
+	    cart_id SERIAL PRIMARY KEY,
+	    customer_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+	    product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
+	    quantity INT NOT NULL DEFAULT 1,
+	    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    UNIQUE (customer_id, product_id) 
+	);
+2025-10-23 14:54:04.713 IST [95975] ERROR:  relation "payments" already exists
+2025-10-23 14:54:04.713 IST [95975] STATEMENT:  CREATE TABLE payments (
+	    payment_id SERIAL PRIMARY KEY,
+	    order_id INT REFERENCES orders(order_id) ON DELETE CASCADE,
+	    payment_method VARCHAR(50) NOT NULL,
+	    payment_status VARCHAR(20) CHECK (payment_status IN ('Pending', 'Completed', 'Failed', 'Refunded')) DEFAULT 'Pending',
+	    transaction_id VARCHAR(100),
+	    amount NUMERIC(10,2) NOT NULL,
+	    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-10-23 14:54:47.241 IST [95975] ERROR:  column "payment_status" of relation "payments" does not exist at character 49
+2025-10-23 14:54:47.241 IST [95975] STATEMENT:  INSERT INTO payments (order_id, payment_method, payment_status, transaction_id, amount)
+	VALUES
+	(5, 'Online Payment', 'Completed', 'TXN12345', 180.00),
+	(6, 'UPI', 'Completed', 'TXN67890', 260.00),
+	(7, 'Cash on Delivery', 'Pending', NULL, 90.00),
+	(8, 'UPI', 'Completed', 'TXN99887', 150.00);
+2025-10-23 15:00:59.236 IST [95975] ERROR:  new row for relation "payments" violates check constraint "payments_payment_method_check"
+2025-10-23 15:00:59.236 IST [95975] DETAIL:  Failing row contains (1, 5, Online Payment, TXN12345, 180.00, Pending, 2025-10-23 15:00:59.235961, Completed).
+2025-10-23 15:00:59.236 IST [95975] STATEMENT:  INSERT INTO payments (order_id, payment_method, payment_status, transaction_id, amount)
+	VALUES
+	(5, 'Online Payment', 'Completed', 'TXN12345', 180.00),
+	(6, 'UPI', 'Completed', 'TXN67890', 260.00),
+	(7, 'Cash on Delivery', 'Pending', NULL, 90.00),
+	(8, 'UPI', 'Completed', 'TXN99887', 150.00);
+2025-10-23 15:02:26.277 IST [95975] ERROR:  new row for relation "payments" violates check constraint "payments_payment_method_check"
+2025-10-23 15:02:26.277 IST [95975] DETAIL:  Failing row contains (8, 7, Cash on Delivery, null, 90.00, Pending, 2025-10-23 15:02:26.276893, Pending).
+2025-10-23 15:02:26.277 IST [95975] STATEMENT:  INSERT INTO payments (order_id, payment_method, payment_status, transaction_id, amount)
+	VALUES
+	(5, 'Online Payment', 'Completed', 'TXN12345', 180.00),
+	(6, 'UPI', 'Completed', 'TXN67890', 260.00),
+	(7, 'Cash on Delivery', 'Pending', NULL, 90.00),
+	(8, 'UPI', 'Completed', 'TXN99887', 150.00);
+2025-10-23 15:05:01.694 IST [95975] ERROR:  relation "delivery" already exists
+2025-10-23 15:05:01.694 IST [95975] STATEMENT:  CREATE TABLE delivery (
+	    delivery_id SERIAL PRIMARY KEY,
+	    order_id INT REFERENCES orders(order_id) ON DELETE CASCADE,
+	    delivery_agent_name VARCHAR(100),
+	    contact_number VARCHAR(15),
+	    vehicle_number VARCHAR(20),
+	    dispatch_time TIMESTAMP,
+	    delivery_time TIMESTAMP,
+	    status VARCHAR(20) CHECK (status IN ('Pending', 'Dispatched', 'In Transit', 'Delivered', 'Failed')) DEFAULT 'Pending'
+	);
+2025-10-23 15:06:13.730 IST [95975] ERROR:  column "delivery_agent_name" of relation "delivery" does not exist at character 33
+2025-10-23 15:06:13.730 IST [95975] STATEMENT:  INSERT INTO delivery (order_id, delivery_agent_name, contact_number, vehicle_number, dispatch_time, delivery_time, status)
+	VALUES
+	(5, 'Amit Kumar', '9876501234', 'MH12AB1234', '2025-10-21 10:00:00', '2025-10-21 15:00:00', 'Delivered'),
+	(6, 'Rahul Singh', '9876505678', 'DL03CD4567', '2025-10-22 11:30:00', NULL, 'In Transit'),
+	(7, 'Suresh Patel', '9876509876', 'MH14EF7890', NULL, NULL, 'Pending'),
+	(8, 'Amit Kumar', '9876501234', 'MH12AB1234', '2025-10-22 09:00:00', '2025-10-22 13:00:00', 'Delivered');
+2025-10-23 15:08:16.984 IST [95975] ERROR:  relation "wishlist" already exists
+2025-10-23 15:08:16.984 IST [95975] STATEMENT:  CREATE TABLE wishlist (
+	    wishlist_id SERIAL PRIMARY KEY,
+	    customer_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+	    product_id INT REFERENCES products(product_id) ON DELETE CASCADE,
+	    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	    UNIQUE (customer_id, product_id)
+	);
+2025-10-23 15:10:09.770 IST [95975] ERROR:  relation "notifications" already exists
+2025-10-23 15:10:09.770 IST [95975] STATEMENT:  CREATE TABLE notifications (
+	    notification_id SERIAL PRIMARY KEY,
+	    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+	    title VARCHAR(100) NOT NULL,
+	    message TEXT NOT NULL,
+	    type VARCHAR(30) CHECK (type IN ('Order', 'Stock', 'Promotion', 'System')) DEFAULT 'System',
+	    is_read BOOLEAN DEFAULT FALSE,
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-10-23 15:15:45.578 IST [95975] ERROR:  syntax error at or near "ry_app_db" at character 1
+2025-10-23 15:15:45.578 IST [95975] STATEMENT:  ry_app_db=# 
+	 integer                     |           |          | 
+	 subject    | character varying(150)      |           | not null | 
+	 message    | text                        |           | not null | 
+	 status     | character varying(20)       |           |          | 'Open'::character varying
+	 priority   | character varying(20)       |           |          | 'Medium'::character varying
+	 created_at | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+	 updated_at | timestamp without time zone |           |          | CURRENT_TIMESTAMP
+	Indexes:
+	    "support_tickets_pkey" PRIMARY KEY, btree (ticket_id)
+	Check constraints:
+	    "support_tickets_priority_check" CHECK (priority::text = ANY (ARRAY['Low'::character varying, 'Medium'::character varying, 'High'::character varying]::text[]))
+	    "support_tickets_status_check" CHECK (status::text = ANY (ARRAY['Open'::character varying, 'In Progress'::character varying, 'Resolved'::character varying, 'Closed'::character varying]::text[]))
+	Foreign-key constraints:
+	    "support_tickets_order_id_fkey" FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE SET NULL
+	    "support_tickets_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+	(END)
+	grocery_app_db=# 
+	INSERT INTO support_tickets (user_id, order_id, subject, message, status, priority)
+	VALUES
+	(1, 5, 'Late Delivery', 'My order #5 was delivered two days late. Please check.', 'Resolved', 'Medium'),
+	(2, 6, 'Damaged Item', 'Received damaged bread in my last order.', 'In Progress', 'High'),
+	(3, 7, 'Payment Not Reflecting', 'Paid via UPI but order still shows Pending.', 'Open', 'High'),
+	(4, NULL, 'App Feedback', 'The seller dashboard graph is not loading properly.', 'Open', 'Low');
+2025-10-23 15:17:30.621 IST [95975] ERROR:  relation "activity_logs" already exists
+2025-10-23 15:17:30.621 IST [95975] STATEMENT:  CREATE TABLE activity_logs (
+	    log_id SERIAL PRIMARY KEY,
+	    user_id INT REFERENCES users(user_id) ON DELETE SET NULL,
+	    action VARCHAR(100) NOT NULL,
+	    description TEXT,
+	    related_table VARCHAR(50),
+	    related_id INT,
+	    ip_address VARCHAR(45),
+	    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+2025-10-23 15:56:06.394 IST [99690] LOG:  unexpected EOF on client connection with an open transaction
+2025-10-23 15:57:52.968 IST [232] LOG:  unexpected EOF on client connection with an open transaction
