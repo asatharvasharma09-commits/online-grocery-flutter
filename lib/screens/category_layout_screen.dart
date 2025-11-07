@@ -5,7 +5,6 @@ import 'cart_screen.dart';
 
 class CategoryLayoutScreen extends StatefulWidget {
   final String? initialCategory;
-
   const CategoryLayoutScreen({super.key, this.initialCategory});
 
   @override
@@ -13,42 +12,32 @@ class CategoryLayoutScreen extends StatefulWidget {
 }
 
 class _CategoryLayoutScreenState extends State<CategoryLayoutScreen> {
+  final Color primaryBlue = const Color(0xFF3D8BF2);
   String selectedCategory = 'Fruits';
   String? selectedSubcategory;
+  String selectedSort = "Default";
 
   final Map<String, List<String>> categories = {
     'Fruits': ['Citrus', 'Berries'],
     'Vegetables': ['Leafy Greens', 'Root Vegetables'],
   };
 
-  final Map<String, List<Map<String, String>>> products = {
+  final Map<String, List<Map<String, dynamic>>> products = {
     'Citrus': [
-      {'name': 'Orange', 'price': '₹40/kg', 'quantity': '1 kg', 'image': 'assets/images/orange.png'},
-      {'name': 'Lemon', 'price': '₹30/kg', 'quantity': '500 g', 'image': 'assets/images/lemon.png'},
-      {'name': 'Sweet Lime', 'price': '₹50/kg', 'quantity': '1 kg', 'image': 'assets/images/sweet_lime.png'},
-      {'name': 'Grapefruit', 'price': '₹60/kg', 'quantity': '500 g', 'image': 'assets/images/grapefruit.png'},
-      {'name': 'Tangerine', 'price': '₹55/kg', 'quantity': '1 kg', 'image': 'assets/images/tangerine.png'},
+      {'id': 'f1', 'name': 'Orange', 'price': 40.0, 'quantity': '1 kg', 'image': 'assets/images/orange.png'},
+      {'id': 'f2', 'name': 'Lemon', 'price': 30.0, 'quantity': '500 g', 'image': 'assets/images/lemon.png'},
     ],
     'Berries': [
-      {'name': 'Strawberry', 'price': '₹120/kg', 'quantity': '500 g', 'image': 'assets/images/strawberry.png'},
-      {'name': 'Blueberry', 'price': '₹200/kg', 'quantity': '250 g', 'image': 'assets/images/blueberry.png'},
-      {'name': 'Raspberry', 'price': '₹150/kg', 'quantity': '250 g', 'image': 'assets/images/raspberry.png'},
-      {'name': 'Blackberry', 'price': '₹180/kg', 'quantity': '250 g', 'image': 'assets/images/blackberry.png'},
-      {'name': 'Cranberry', 'price': '₹140/kg', 'quantity': '250 g', 'image': 'assets/images/cranberry.png'},
+      {'id': 'b1', 'name': 'Strawberry', 'price': 120.0, 'quantity': '500 g', 'image': 'assets/images/strawberry.png'},
+      {'id': 'b2', 'name': 'Blueberry', 'price': 200.0, 'quantity': '250 g', 'image': 'assets/images/blueberry.png'},
     ],
     'Leafy Greens': [
-      {'name': 'Spinach', 'price': '₹25/kg', 'quantity': '500 g', 'image': 'assets/images/spinach.png'},
-      {'name': 'Lettuce', 'price': '₹30/kg', 'quantity': '250 g', 'image': 'assets/images/lettuce.png'},
-      {'name': 'Kale', 'price': '₹40/kg', 'quantity': '250 g', 'image': 'assets/images/kale.png'},
-      {'name': 'Fenugreek', 'price': '₹35/kg', 'quantity': '250 g', 'image': 'assets/images/fenugreek.png'},
-      {'name': 'Cabbage', 'price': '₹28/kg', 'quantity': '1 kg', 'image': 'assets/images/cabbage.png'},
+      {'id': 'v1', 'name': 'Spinach', 'price': 25.0, 'quantity': '500 g', 'image': 'assets/images/spinach.png'},
+      {'id': 'v2', 'name': 'Lettuce', 'price': 30.0, 'quantity': '250 g', 'image': 'assets/images/lettuce.png'},
     ],
     'Root Vegetables': [
-      {'name': 'Carrot', 'price': '₹20/kg', 'quantity': '1 kg', 'image': 'assets/images/carrot.png'},
-      {'name': 'Beetroot', 'price': '₹25/kg', 'quantity': '500 g', 'image': 'assets/images/beetroot.png'},
-      {'name': 'Potato', 'price': '₹18/kg', 'quantity': '1 kg', 'image': 'assets/images/potato.png'},
-      {'name': 'Sweet Potato', 'price': '₹22/kg', 'quantity': '1 kg', 'image': 'assets/images/sweet_potato.png'},
-      {'name': 'Radish', 'price': '₹15/kg', 'quantity': '1 kg', 'image': 'assets/images/radish.png'},
+      {'id': 'r1', 'name': 'Carrot', 'price': 20.0, 'quantity': '1 kg', 'image': 'assets/images/carrot.png'},
+      {'id': 'r2', 'name': 'Beetroot', 'price': 25.0, 'quantity': '500 g', 'image': 'assets/images/beetroot.png'},
     ],
   };
 
@@ -60,23 +49,39 @@ class _CategoryLayoutScreenState extends State<CategoryLayoutScreen> {
     }
   }
 
+  List<Map<String, dynamic>> _getFilteredProducts() {
+    if (selectedSubcategory == null) return [];
+    List<Map<String, dynamic>> list = List.from(products[selectedSubcategory]!);
+    if (selectedSort == "Low to High") {
+      list.sort((a, b) => a['price'].compareTo(b['price']));
+    } else if (selectedSort == "High to Low") {
+      list.sort((a, b) => b['price'].compareTo(a['price']));
+    }
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
-    final totalItems = cart.items.values.fold<int>(0, (a, b) => a + b);
+    final totalItems = cart.itemCount;
+    final filteredProducts = _getFilteredProducts();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFF),
       appBar: AppBar(
-        title: const Text('Categories'),
-        backgroundColor: const Color(0xFF3D8BF2),
+        title: const Text('Shop by Category'),
+        backgroundColor: primaryBlue,
+        centerTitle: true,
+        elevation: 2,
       ),
       body: Row(
         children: [
-          // 📋 Sidebar Categories
+          // Sidebar
           Container(
-            width: 100,
+            width: 90,
             color: Colors.grey[100],
             child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 10),
               children: categories.keys.map((category) {
                 bool isSelected = category == selectedCategory;
                 return GestureDetector(
@@ -86,14 +91,16 @@ class _CategoryLayoutScreenState extends State<CategoryLayoutScreen> {
                       selectedSubcategory = null;
                     });
                   },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
-                    padding: const EdgeInsets.all(12),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
                     decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFFE3F2FD) : Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+                      color: isSelected ? primaryBlue.withOpacity(0.15) : Colors.white,
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isSelected ? const Color(0xFF3D8BF2) : Colors.grey.shade300,
+                        color: isSelected ? primaryBlue : Colors.grey.shade300,
+                        width: 1.2,
                       ),
                     ),
                     child: RotatedBox(
@@ -103,7 +110,7 @@ class _CategoryLayoutScreenState extends State<CategoryLayoutScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isSelected ? const Color(0xFF3D8BF2) : Colors.black87,
+                          color: isSelected ? primaryBlue : Colors.black87,
                         ),
                       ),
                     ),
@@ -113,65 +120,83 @@ class _CategoryLayoutScreenState extends State<CategoryLayoutScreen> {
             ),
           ),
 
-          // 🧺 Products Section
+          // Right Section
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    selectedCategory,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  // Title + Sort
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(selectedCategory, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      DropdownButton<String>(
+                        value: selectedSort,
+                        borderRadius: BorderRadius.circular(12),
+                        underline: const SizedBox(),
+                        icon: const Icon(Icons.sort, color: Colors.black54),
+                        style: const TextStyle(fontSize: 14, color: Colors.black87),
+                        items: const [
+                          DropdownMenuItem(value: "Default", child: Text("Default")),
+                          DropdownMenuItem(value: "Low to High", child: Text("Price: Low → High")),
+                          DropdownMenuItem(value: "High to Low", child: Text("Price: High → Low")),
+                        ],
+                        onChanged: (v) => setState(() => selectedSort = v ?? "Default"),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
 
-                  // 🏷 Subcategories
+                  // Subcategories
                   Wrap(
                     spacing: 10,
+                    runSpacing: 8,
                     children: categories[selectedCategory]!.map((subcategory) {
                       bool isSelected = subcategory == selectedSubcategory;
                       return ChoiceChip(
-                        label: Text(subcategory),
+                        label: Text(subcategory,
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black87,
+                              fontWeight: FontWeight.w500,
+                            )),
                         selected: isSelected,
-                        selectedColor: const Color(0xFF3D8BF2).withOpacity(0.3),
-                        onSelected: (selected) {
-                          setState(() {
-                            selectedSubcategory = selected ? subcategory : null;
-                          });
-                        },
+                        selectedColor: primaryBlue,
+                        backgroundColor: Colors.grey[200],
+                        onSelected: (selected) => setState(() {
+                          selectedSubcategory = selected ? subcategory : null;
+                        }),
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 14),
 
-                  // 🛒 Product Grid
+                  // Products
                   if (selectedSubcategory == null)
                     const Expanded(
-                      child: Center(
-                        child: Text(
-                          'Select a subcategory to view products',
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                      ),
-                    )
+                        child: Center(
+                            child: Text("Select a subcategory to view products 👇",
+                                style: TextStyle(color: Colors.black54))))
+                  else if (filteredProducts.isEmpty)
+                    const Expanded(
+                        child: Center(
+                            child: Text("No products found 😕",
+                                style: TextStyle(color: Colors.black54))))
                   else
                     Expanded(
                       child: GridView.builder(
-                        padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 0.60,
+                          mainAxisSpacing: 14,
+                          crossAxisSpacing: 14,
+                          childAspectRatio: 0.7,
                         ),
-                        itemCount: products[selectedSubcategory]?.length ?? 0,
+                        itemCount: filteredProducts.length,
                         itemBuilder: (context, index) {
-                          final product = products[selectedSubcategory]![index];
-                          final name = product['name']!;
-                          final price = product['price']!;
-                          final quantity = product['quantity'] ?? '';
-                          final qty = cart.items[name] ?? 0;
+                          final p = filteredProducts[index];
+                          final bool inCart = cart.cartItems.containsKey(p['id']);
 
                           return Container(
                             decoration: BoxDecoration(
@@ -180,7 +205,7 @@ class _CategoryLayoutScreenState extends State<CategoryLayoutScreen> {
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 8,
+                                  blurRadius: 6,
                                   offset: const Offset(0, 4),
                                 ),
                               ],
@@ -188,108 +213,40 @@ class _CategoryLayoutScreenState extends State<CategoryLayoutScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                // 🖼 Product Image
                                 ClipRRect(
                                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                                   child: Image.asset(
-                                    product['image'] ?? 'assets/images/placeholder.png',
-                                    height: 100,
+                                    p['image'],
+                                    height: 110,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-
-                                // 📦 Product Info
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        name,
-                                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        quantity,
-                                        style: const TextStyle(fontSize: 13, color: Colors.black54),
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        price,
-                                        style: const TextStyle(
-                                          color: Color(0xFF3D8BF2),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                Text(p['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                                Text("₹${p['price']}", style: const TextStyle(color: Color(0xFF3D8BF2))),
                                 const Spacer(),
-
-                                // ➕ Add / Counter Buttons
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-                                  child: SizedBox(
-                                    height: 36,
-                                    width: double.infinity,
-                                    child: qty == 0
-                                        ? ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: const Color(0xFF3D8BF2),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                            ),
-                                            onPressed: () {
-                                              cart.addToCart(name, price);
-                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                                content: Text("$name added to cart 🛒"),
-                                                duration: const Duration(seconds: 1),
-                                              ));
-                                            },
-                                            child: const Text(
-                                              '+ Add',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          )
-                                        : Container(
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFF3D8BF2),
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                              children: [
-                                                IconButton(
-                                                  onPressed: () {
-                                                    cart.removeFromCart(name);
-                                                  },
-                                                  icon: const Icon(Icons.remove, color: Colors.white),
-                                                  padding: EdgeInsets.zero,
-                                                ),
-                                                Text(
-                                                  '$qty',
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    cart.addToCart(name, price);
-                                                  },
-                                                  icon: const Icon(Icons.add, color: Colors.white),
-                                                  padding: EdgeInsets.zero,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: inCart ? Colors.grey : primaryBlue,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                   ),
+                                  onPressed: () {
+                                    if (!inCart) {
+                                      cart.addItem(
+                                        id: p['id'],
+                                        name: p['name'],
+                                        price: p['price'],
+                                        image: p['image'],
+                                      );
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                          content: Text("${p['name']} added to cart"),
+                                          backgroundColor: primaryBlue));
+                                    }
+                                  },
+                                  child: Text(inCart ? "Added" : "Add"),
                                 ),
+                                const SizedBox(height: 8),
                               ],
                             ),
                           );
@@ -302,38 +259,24 @@ class _CategoryLayoutScreenState extends State<CategoryLayoutScreen> {
           ),
         ],
       ),
-
-      // 🛍 Floating Cart Button
       floatingActionButton: Stack(
         children: [
           FloatingActionButton(
-            backgroundColor: const Color(0xFF3D8BF2),
+            backgroundColor: primaryBlue,
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CartScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => CartScreen()));
             },
-            child: const Icon(Icons.shopping_cart, color: Colors.white),
+            child: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
           ),
           if (totalItems > 0)
             Positioned(
               right: 0,
               top: 0,
               child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  '$totalItems',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                padding: const EdgeInsets.all(5),
+                decoration: const BoxDecoration(color: Colors.redAccent, shape: BoxShape.circle),
+                child: Text('$totalItems',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
               ),
             ),
         ],

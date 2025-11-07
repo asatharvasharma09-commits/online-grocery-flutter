@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'main_tabs.dart';
-import 'registration_success_screen.dart';
+import 'customer_registration_success_screen.dart';
+import 'seller_registration_success_screen.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
   final String phoneNumber;
@@ -48,7 +49,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
-      builder: (_) => const RegistrationSuccessScreen(),
+      builder: (_) => const CustomerRegistrationSuccessScreen(),
     ),
   );
 }

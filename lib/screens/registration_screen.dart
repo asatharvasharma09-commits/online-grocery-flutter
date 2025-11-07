@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'otp_verify_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/user_storage.dart';
-import 'registration_success_screen.dart';
+import 'customer_registration_success_screen.dart';
+import 'seller_registration_success_screen.dart';
+import 'customer_registration_success_screen.dart';
+import 'seller_registration_success_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -61,13 +64,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     setState(() => _isSaving = false);
 
     // 🚀 Go to OTP Verification screen
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => OtpVerifyScreen(phoneNumber: phone),
-      ),
-    );
-  }
+    if (_selectedRole == 'Seller') {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const SellerRegistrationSuccessScreen(),
+    ),
+  );
+} else {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const CustomerRegistrationSuccessScreen(),
+    ),
+  );
+}  }
 
   String? _validateName(String? v) {
     if (v == null || v.trim().isEmpty) return 'Please enter full name';

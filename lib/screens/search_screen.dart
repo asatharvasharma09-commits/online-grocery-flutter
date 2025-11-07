@@ -164,7 +164,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                         horizontal: 12, vertical: 6),
                                   ),
                                   onPressed: () {
-                                    cart.addItem(name);
+                                    cart.addItem(
+  id: name, // or a unique id like 's_${name.toLowerCase()}'
+  name: name,
+  price: 50.0, // you can change this based on your product
+  image: 'assets/images/default.png', // update path if needed
+);
                                     _addToRecent(searchQuery);
                                   },
                                   child: const Text("Add",
@@ -189,7 +194,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold)),
                                       IconButton(
-                                        onPressed: () => cart.addItem(name),
+                                        onPressed: () => cart.addItem(
+  id: name, // or generate a unique id if needed
+  name: name,
+  price: 50.0, // put the actual price for that product
+  image: 'assets/images/default.png', // update image path accordingly
+),
                                         icon: const Icon(Icons.add,
                                             color: Colors.white),
                                       ),

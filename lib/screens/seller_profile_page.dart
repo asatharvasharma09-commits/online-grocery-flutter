@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'auth_main.dart';
 
 class SellerProfilePage extends StatefulWidget {
   const SellerProfilePage({super.key});
@@ -142,21 +143,34 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
             _buildSettingsCard(),
             const SizedBox(height: 25),
 
+            // ✅ Fixed Logout Button
             OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
                 side: BorderSide(color: primaryBlue),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Logged out successfully.")),
-              ),
+              onPressed: () async {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Logged out successfully.")),
+                );
+
+                await Future.delayed(const Duration(milliseconds: 500));
+                if (!mounted) return;
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AuthMain()),
+                  (route) => false,
+                );
+              },
               icon: Icon(Icons.logout, color: primaryBlue),
               label: Text(
                 "Logout",
                 style: TextStyle(fontSize: 16, color: primaryBlue, fontWeight: FontWeight.w600),
               ),
             ),
+
             const SizedBox(height: 30),
           ],
         ),
@@ -165,7 +179,6 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
   }
 
   // 🧩 UI Components
-
   Widget _buildProfileHeader() => Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -210,34 +223,39 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
             Icon(icon, color: primaryBlue),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(label, style: const TextStyle(fontSize: 13, color: Colors.black54)),
-                Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-              ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: const TextStyle(fontSize: 13, color: Colors.black54)),
+                  Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                ],
+              ),
             ),
           ],
         ),
       );
 
-  Widget _buildInfoCard({required String title, required List<Widget> children, required Function() onEdit}) =>
-      Container(
+  Widget _buildInfoCard({required String title, required List<Widget> children, required Function() onEdit}) => Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [BoxShadow(color: Colors.black12.withOpacity(0.08), blurRadius: 8)],
         ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              TextButton(onPressed: onEdit, child: const Text("Edit", style: TextStyle(color: Color(0xFF3D8BF2))))
-            ],
-          ),
-          const SizedBox(height: 10),
-          ...children
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                TextButton(onPressed: onEdit, child: const Text("Edit", style: TextStyle(color: Color(0xFF3D8BF2)))),
+              ],
+            ),
+            const SizedBox(height: 10),
+            ...children,
+          ],
+        ),
       );
 
   Widget _buildSettingsCard() => Container(
@@ -322,9 +340,11 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
               ...fields,
               const SizedBox(height: 12),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: primaryBlue, minimumSize: const Size(double.infinity, 48)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryBlue, minimumSize: const Size(double.infinity, 48)),
                 onPressed: () => setState(() => Navigator.pop(ctx)),
-                child: const Text("Save Changes", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                child: const Text("Save Changes",
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 20),
             ],
@@ -340,7 +360,10 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
         controller: ctrl,
-        decoration: InputDecoration(labelText: label, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        ),
         onChanged: onSave,
       ),
     );

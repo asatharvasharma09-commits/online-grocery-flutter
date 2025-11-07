@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 import 'category_layout_screen.dart';
 import 'profile_screen.dart';
+import 'orders_screen.dart'; // ✅ create a simple placeholder if not yet done
 
 class MainBottomNav extends StatefulWidget {
   const MainBottomNav({super.key});
@@ -9,13 +11,16 @@ class MainBottomNav extends StatefulWidget {
   State<MainBottomNav> createState() => _MainBottomNavState();
 }
 
-class _MainBottomNavState extends State<MainBottomNav>
-    with SingleTickerProviderStateMixin {
+class _MainBottomNavState extends State<MainBottomNav> {
   int _selectedIndex = 0;
   late PageController _pageController;
 
+  final Color primaryBlue = const Color(0xFF3D8BF2);
+
   final List<Widget> _pages = const [
+    HomeScreen(),
     CategoryLayoutScreen(),
+    OrdersScreen(), // 🧾 Placeholder page
     ProfileScreen(),
   ];
 
@@ -32,58 +37,70 @@ class _MainBottomNavState extends State<MainBottomNav>
   }
 
   void _onItemTapped(int index) {
+    setState(() => _selectedIndex = index);
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 250),
       curve: Curves.easeInOut,
     );
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFFF5F9FF),
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         children: _pages,
       ),
+
+      // 🌈 Modern bottom nav bar
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
+              blurRadius: 8,
+              offset: const Offset(0, -3),
             ),
           ],
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(22),
+            topRight: Radius.circular(22),
           ),
         ),
         child: ClipRRect(
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+            topLeft: Radius.circular(22),
+            topRight: Radius.circular(22),
           ),
           child: BottomNavigationBar(
             currentIndex: _selectedIndex,
-            selectedItemColor: Colors.green[700],
-            unselectedItemColor: Colors.grey[500],
+            onTap: _onItemTapped,
             backgroundColor: Colors.white,
             type: BottomNavigationBarType.fixed,
-            elevation: 0,
-            onTap: _onItemTapped,
+            selectedItemColor: primaryBlue,
+            unselectedItemColor: Colors.grey[500],
+            selectedFontSize: 13,
+            unselectedFontSize: 12,
+            showUnselectedLabels: true,
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.grid_view_outlined),
-                activeIcon: Icon(Icons.grid_view_rounded),
-                label: 'Category',
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home_rounded),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.category_outlined),
+                activeIcon: Icon(Icons.category_rounded),
+                label: 'Categories',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.receipt_long_outlined),
+                activeIcon: Icon(Icons.receipt_rounded),
+                label: 'Orders',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person_outline),
