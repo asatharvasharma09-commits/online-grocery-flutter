@@ -6,6 +6,7 @@ import 'package:grocery_app/screens/wallet_screen.dart';
 import 'package:grocery_app/screens/search_screen.dart';
 import 'package:animations/animations.dart'; // ✨ for smooth transitions
 import 'cart_screen.dart';
+import 'package:grocery_app/screens/notification_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -85,10 +86,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
             ],
           ),
-          const Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: Icon(Icons.notifications_none, color: Colors.white),
-          ),
+         IconButton(
+  icon: const Icon(Icons.notifications_none, color: Colors.white),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =>  NotificationScreen()),
+    );
+  },
+),
         ],
       ),
 
